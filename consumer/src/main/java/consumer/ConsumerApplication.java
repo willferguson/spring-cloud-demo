@@ -1,5 +1,3 @@
-// Copyright (c) 2018 Travelex Ltd
-
 package consumer;
 
 import org.springframework.boot.SpringApplication;

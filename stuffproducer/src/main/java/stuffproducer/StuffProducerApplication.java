@@ -1,15 +1,13 @@
-// Copyright (c) 2018 Travelex Ltd
-
-package producer;
+package stuffproducer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ProducerApplication {
+public class StuffProducerApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ProducerApplication.class, args);
+        SpringApplication.run(StuffProducerApplication.class, args);
     }
 
 }

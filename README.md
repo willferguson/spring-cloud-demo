@@ -41,10 +41,7 @@ Everything else uses service discovery to find dependents.
  
 Further Work:
 
-Swap RestTemplate for Feign
-Auto refreshing of config clients with rabbitmq on config change (requires route from GitHub -> ConfigServer)
-Add Zuul as frontend 
-Use FIT to inject failure etc. 
-
-
-
+- Swap RestTemplate for Feign
+- Auto refreshing of config clients with rabbitmq on config change (requires route from GitHub -> ConfigServer)
+- Add Zuul as frontend 
+- Use FIT to inject failure etc. 

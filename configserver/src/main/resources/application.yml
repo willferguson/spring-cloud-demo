@@ -1,6 +1,8 @@
 server:
   port: 8888
 spring:
+  application:
+    name: configserver
   cloud:
     config:
       server:
@@ -11,4 +13,8 @@ spring:
       name: admin
       password: admin
 
-
+eureka:
+  client:
+    region: default
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/

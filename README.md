@@ -3,13 +3,13 @@
 
 Current:
 
-Eureka for service discovery. 
-Spring Cloud Config for centralised configuration management. 
-Hystrix for circuit breaking.
-RestTemplate for "Eureka Aware HTTPClient"
-Ribbon for client side load-balancing.   
-Actuator - for metrics & management endpoints
-Micrometer for statsd metrics - only configured for Consumer.
+- Eureka for service discovery. 
+- Spring Cloud Config for centralised configuration management. 
+- Hystrix for circuit breaking.
+- RestTemplate for "Eureka Aware HTTPClient"
+- Ribbon for client side load-balancing.   
+- Actuator - for metrics & management endpoints
+- Micrometer for statsd metrics - only configured for Consumer.
  
 Services:
 

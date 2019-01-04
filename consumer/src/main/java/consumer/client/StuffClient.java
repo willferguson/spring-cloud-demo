@@ -3,7 +3,9 @@ package consumer.client;
 import com.netflix.config.ConfigurationManager;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCollapser;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import consumer.model.Stuff;
+import org.apache.commons.configuration.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -21,34 +23,50 @@ public class StuffClient {
     private RestTemplate restTemplate;
 
     public StuffClient(@Value("${stuffclient.hystrix.timeoutInMilliseconds}") String hystrixTimeout) {
-        ConfigurationManager
-                .getConfigInstance()
-                .setProperty("hystrix.command.GetStuff.execution.isolation.thread.timeoutInMilliseconds", hystrixTimeout);
+        Configuration configuration = ConfigurationManager
+                .getConfigInstance();
+
+        configuration.setProperty("hystrix.command.getStuff.execution.isolation.thread.timeoutInMilliseconds", hystrixTimeout);
+        configuration.setProperty("hystrix.command.getLotsOfStuff.execution.isolation.thread.timeoutInMilliseconds", hystrixTimeout);
 
     }
 
-
-    @HystrixCommand(
-            commandKey = "GetStuff",
-            fallbackMethod = "defaultStuff")
-    @HystrixCollapser(batchMethod = "getLotsOfStuff")
+    @HystrixCommand(commandKey = "getStuff",
+                    fallbackMethod = "defaultStuff")
     public Stuff getStuff(Integer size) {
+        return getStuffInternal(size);
+    }
+
+
+
+    @HystrixCollapser(batchMethod = "getLotsOfStuff")
+    private Stuff getStuffInternal(Integer size) {
         return restTemplate
-                .getForObject("http://stuffproducer/stuff/{size}",
-                        Stuff.class, size);
+                        .getForObject("/stuff/{size}",
+                                      Stuff.class, size);
+    }
+
+    @HystrixCommand(commandKey = "getLotsOfStuff")
+    public List<Stuff> getLotsOfStuff(List<Integer> sizes) {
+        String csv = sizes.stream()
+                          .map(Object::toString)
+                          .reduce((s1, s2) -> s1 + "," + s2)
+                          .orElseThrow(() -> new RuntimeException("Should have received data :("));
+
+        return restTemplate
+                .getForObject("/lotsofStuff/{sizes}",
+                        StuffList.class, csv);
     }
 
     private Stuff defaultStuff(Integer size, Throwable throwable) {
         return new Stuff("-1", 0);
     }
 
-    @HystrixCommand
-    public List<Stuff> getLotsOfStuff(List<Integer> sizes) {
-        return restTemplate
-                .getForObject("http://stuffproducer/lotsofStuff/{sizes}",
-                        StuffList.class, sizes);
-    }
-
     //Grrr Generics
-    private class StuffList extends ArrayList<Stuff> {}
+    public static class StuffList extends ArrayList<Stuff> {
+        public StuffList() {
+            super();
+        }
+
+    }
 }

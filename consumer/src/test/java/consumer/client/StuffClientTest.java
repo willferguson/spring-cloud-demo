@@ -1,5 +1,10 @@
 package consumer.client;
 
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import org.junit.Before;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -16,16 +21,22 @@ import java.util.Arrays;
 @RunWith(MockitoJUnitRunner.class)
 class StuffClientTest {
 
-    @Bean
-    public StuffClient StuffClient() {
-        return new StuffClient("2500");
-    }
 
     @Autowired
     StuffClient stuffClient;
 
+    private static HystrixRequestContext context;
+
+    @BeforeAll
+    public static void setup() {
+        context = HystrixRequestContext.initializeContext();
+    }
     @Test
     public void testCollapsing() {
+
+        // Initialize Hystrix context
+
+
 
         StuffClient spiedStuffClient = Mockito.spy(stuffClient);
 
@@ -35,5 +46,10 @@ class StuffClientTest {
 
         Mockito.verify(spiedStuffClient).getLotsOfStuff(Arrays.asList(1, 2, 3));
 
+    }
+
+    @AfterAll
+    public static void shutdown() {
+        context.shutdown();
     }
 }

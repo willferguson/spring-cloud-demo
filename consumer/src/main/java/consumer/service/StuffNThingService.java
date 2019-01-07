@@ -21,7 +21,7 @@ public class StuffNThingService {
 
     public StuffNThing getStuffNThing(String name, Integer size) {
         Thing thing = thingClient.getThing(name);
-        Stuff stuff = stuffClient.getStuff(size);
+        Stuff stuff = stuffClient.getStuff(size).toBlocking().first();
 
         return new StuffNThing(UUID.randomUUID().toString(), stuff.getSize(), thing.getName());
     }

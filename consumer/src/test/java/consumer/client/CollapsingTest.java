@@ -10,8 +10,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import rx.Observable;
 
 import java.util.Arrays;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -26,22 +29,42 @@ public class CollapsingTest {
     @Test
     public void test() {
 
-        HystrixRequestContext context = HystrixRequestContext.initializeContext();
+
         StuffClient spiedStuffClient = Mockito.spy(stuffClient);
 
-        Stuff s1 = spiedStuffClient.getStuff(1);
-        Stuff s2 = spiedStuffClient.getStuff(2);
-        Stuff s3 = spiedStuffClient.getStuff(3);
-        Stuff s4 = spiedStuffClient.getStuff(4);
-        Stuff s5 = spiedStuffClient.getStuff(5);
-
-        Mockito.verify(spiedStuffClient).getLotsOfStuff(Arrays.asList(1, 2, 3, 4, 5));
-
-        assertEquals("1", s1.getId());
-        assertEquals("2", s2.getId());
+        Executor executor = Executors.newFixedThreadPool(5);
 
 
-        context.shutdown();
+        executor.execute(() -> {
+            HystrixRequestContext context = HystrixRequestContext.initializeContext();
+            stuffClient.getStuff(1);
+
+        });
+        executor.execute(() -> {
+            HystrixRequestContext context = HystrixRequestContext.initializeContext();
+            stuffClient.getStuff(2);
+        });
+        executor.execute(() -> {
+            HystrixRequestContext context = HystrixRequestContext.initializeContext();
+            stuffClient.getStuff(3);
+        });
+        executor.execute(() -> {
+            HystrixRequestContext context = HystrixRequestContext.initializeContext();
+            stuffClient.getStuff(4);
+        });
+        executor.execute(() -> {
+            HystrixRequestContext context = HystrixRequestContext.initializeContext();
+            stuffClient.getStuff(5);
+        });
+
+
+        //Mockito.verify(spiedStuffClient).getLotsOfStuff(Arrays.asList(1, 2, 3, 4, 5));
+
+//        assertEquals(1, s1.getSize());
+//        assertEquals(2, s2.getSize());
+
+
+       // context.shutdown();
 
     }
 }

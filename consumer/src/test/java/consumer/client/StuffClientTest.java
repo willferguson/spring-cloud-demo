@@ -1,36 +1,35 @@
 package consumer.client;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.anything;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
 import consumer.model.Stuff;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureMockRestServiceServer;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
-import org.springframework.http.client.ClientHttpRequest;
-import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.test.util.AssertionErrors;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
-import org.springframework.test.web.client.ResponseCreator;
+import org.springframework.test.web.client.RequestMatcher;
 import org.springframework.web.client.RestTemplate;
+import rx.Observable;
 
-import java.io.IOException;
 import java.util.Arrays;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.anything;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+import java.util.List;
 
 @SpringBootTest(properties = {
         "eureka.client.enabled=false",
@@ -68,30 +67,13 @@ class StuffClientTest {
     @Autowired
     StuffClient stuffClient;
 
-    @BeforeEach
-    public void setUp() throws Exception {
-
-
+    @BeforeAll
+    public static void setUp() throws Exception {
         context = HystrixRequestContext.initializeContext();
+    }
 
-        String testStuffAsString1 =
-                objectMapper.writeValueAsString(new Stuff("1", 1));
-
-        String testStuffAsString2 =
-                objectMapper.writeValueAsString(new Stuff("2", 2));
-
-        this.server.expect(requestTo("/stuff/1"))
-                .andRespond(request -> {
-//                    try {
-//                        Thread.sleep(10000);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-                    return withSuccess(testStuffAsString1, MediaType.APPLICATION_JSON).createResponse(request);
-                });
-
-        this.server.expect(ExpectedCount.manyTimes(), requestTo("/stuff/2"))
-                .andRespond(withSuccess(testStuffAsString2, MediaType.APPLICATION_JSON));
+    static RequestMatcher pathStartsWith(String path) {
+        return request -> AssertionErrors.assertTrue("Path " + request.getURI().getPath() + " should start with " + path, request.getURI().getPath().startsWith(path));
     }
 
     private static HystrixRequestContext context;
@@ -100,23 +82,23 @@ class StuffClientTest {
 
 
     @Test
-    public void testCollapsing() {
+    public void testCollapsing() throws Exception {
+
+        Stuff responseStuff1 = new Stuff("1", 1);
+        Stuff responseStuff2 = new Stuff("2", 2);
+
+        String response = objectMapper.writeValueAsString(Arrays.asList(responseStuff1, responseStuff2));
+
+        this.server.expect(ExpectedCount.manyTimes(), pathStartsWith("/lotsofStuff"))
+                   .andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
 
 
+        Observable<Stuff> s1 = stuffClient.getStuffCollapsed(1);
+        Observable<Stuff> s2 = stuffClient.getStuffCollapsed(2);
 
+        List<Stuff> stuffList = s1.mergeWith(s2).toList().toBlocking().first();
+        assertEquals(2, stuffList.size());
 
-        StuffClient spiedStuffClient = Mockito.spy(stuffClient);
-
-        Stuff s1 = spiedStuffClient.getStuff(1);
-        Stuff s2 = spiedStuffClient.getStuff(2);
-        Stuff s3 = spiedStuffClient.getStuff(2);
-        Stuff s4 = spiedStuffClient.getStuff(2);
-        Stuff s5 = spiedStuffClient.getStuff(2);
-
-        //Mockito.verify(spiedStuffClient).getLotsOfStuff(Arrays.asList(1, 2));
-
-        assertEquals("1", s1.getId());
-        assertEquals("2", s2.getId());
 
     }
 

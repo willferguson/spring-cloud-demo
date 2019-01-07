@@ -1,5 +1,7 @@
 package consumer.model;
 
+import java.util.Objects;
+
 public class Stuff {
 
     private String id;
@@ -27,5 +29,22 @@ public class Stuff {
 
     public void setSize(int size) {
         this.size = size;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Stuff stuff = (Stuff) o;
+        return size == stuff.size && Objects.equals(id, stuff.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, size);
     }
 }

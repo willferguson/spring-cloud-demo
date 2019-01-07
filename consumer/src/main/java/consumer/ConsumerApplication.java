@@ -18,7 +18,7 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 @EnableHystrixDashboard
 @EnableEurekaClient
 @EnableFeignClients
-@ConditionalOnProperty("eureka.client.enabled=true")
+//@ConditionalOnProperty("eureka.client.enabled=true")
 public class ConsumerApplication {
 
     @Bean

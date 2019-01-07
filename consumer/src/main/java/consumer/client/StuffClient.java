@@ -1,6 +1,7 @@
 package consumer.client;
 
 import com.netflix.config.ConfigurationManager;
+import com.netflix.hystrix.HystrixCollapserProperties;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCollapser;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
@@ -19,27 +20,33 @@ import java.util.List;
 @RefreshScope
 public class StuffClient {
 
-    @Autowired
     private RestTemplate restTemplate;
 
-    public StuffClient(@Value("${stuffclient.hystrix.timeoutInMilliseconds}") String hystrixTimeout) {
+    @Autowired
+    public StuffClient(
+            @Value("${stuffclient.hystrix.timeoutInMilliseconds}") String hystrixTimeout,
+            RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+
         Configuration configuration = ConfigurationManager
                 .getConfigInstance();
 
         configuration.setProperty("hystrix.command.getStuff.execution.isolation.thread.timeoutInMilliseconds", hystrixTimeout);
         configuration.setProperty("hystrix.command.getLotsOfStuff.execution.isolation.thread.timeoutInMilliseconds", hystrixTimeout);
-
+        configuration.setProperty("hystrix.collapser.default.timerDelayInMilliseconds", "1000");
     }
 
-    @HystrixCommand(commandKey = "getStuff",
-                    fallbackMethod = "defaultStuff")
+    @HystrixCommand(commandKey = "getStuff", fallbackMethod = "defaultStuff")
     public Stuff getStuff(Integer size) {
         return getStuffInternal(size);
     }
 
 
 
-    @HystrixCollapser(batchMethod = "getLotsOfStuff")
+    @HystrixCollapser(
+            batchMethod = "getLotsOfStuff",
+            scope = com.netflix.hystrix.HystrixCollapser.Scope.GLOBAL
+    )
     private Stuff getStuffInternal(Integer size) {
         return restTemplate
                         .getForObject("/stuff/{size}",

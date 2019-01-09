@@ -8,6 +8,7 @@ spring:
       server:
         git:
           uri: git@github.com:willferguson/config.git
+          clone-on-start: true
   security:
     user:
       name: admin

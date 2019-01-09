@@ -1,0 +1,26 @@
+server:
+  port: 9090
+spring:
+  application:
+    name: thingproducer
+  profiles:
+    active: dev
+  cloud:
+    config:
+      username: admin
+      password: admin
+      discovery:
+        service-id: configserver
+        enabled: true
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+    register-with-eureka: true
+  instance:
+    preferIpAddress: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

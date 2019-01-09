@@ -4,7 +4,7 @@ spring:
   profiles:
     active: dev
   application:
-    name: consumer
+    name: fillingservice
   cloud:
     config:
       discovery:

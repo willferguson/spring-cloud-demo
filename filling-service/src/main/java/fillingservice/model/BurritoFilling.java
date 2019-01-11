@@ -5,6 +5,7 @@ package fillingservice.model;
 import fillingservice.model.meat.Meat;
 import fillingservice.model.salad.Salad;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,6 +15,8 @@ public class BurritoFilling {
     private List<Salad> salad;
 
     public BurritoFilling() {
+        this.meat = new ArrayList<>();
+        this.salad = new ArrayList<>();
     }
 
     public BurritoFilling(List<Meat> meat, List<Salad> salad) {
@@ -35,6 +38,14 @@ public class BurritoFilling {
 
     public void setSalad(List<Salad> salad) {
         this.salad = salad;
+    }
+
+    public void addMeat(Meat meat) {
+        this.meat.add(meat);
+    }
+
+    public void addSalad(Salad salad) {
+        this.salad.add(salad);
     }
 
     @Override

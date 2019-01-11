@@ -23,21 +23,16 @@ public class FillingService {
     private MeatClient meatClient;
 
     public BurritoFilling orderFilling(BurritoFilling burritoFilling) {
-//        List<Meat> meatFillingRequest = burritoFilling.getMeat();
-//        List<Salad> saladFillingRequest = burritoFilling.getSalad();
-//
-//        Observable<Meat> om = Observable.from(meatFillingRequest)
-//                  .flatMap(meatClient::getMeat);
-//
-//        Observable<Salad> os = Observable.from(saladFillingRequest)
-//                                         .flatMap(saladClient::getSalad);
-//
-//        Observable<BurritoFilling> ob = Observable.merge(om, os)
-//                  .reduce(new Func2<Object, BurritoFilling, BurritoFilling>() {
-//
-//                  })
-//
 
-        return new BurritoFilling();
+        List<Meat> meatFillingRequest = burritoFilling.getMeat();
+        List<Salad> saladFillingRequest = burritoFilling.getSalad();
+
+        Observable<Meat> om = Observable.from(meatFillingRequest).flatMap(meatClient::getMeat);
+
+        Observable<Salad> os = Observable.from(saladFillingRequest).flatMap(saladClient::getSalad);
+
+        return Observable.
+            return new BurritoFilling();
+        }).toBlocking().first();
     }
 }

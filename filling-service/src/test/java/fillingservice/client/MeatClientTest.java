@@ -36,70 +36,70 @@ import java.util.List;
 @EnableAspectJAutoProxy
 class MeatClientTest {
 
-    @Configuration
-    @EnableHystrix
-    public static class Config {
-
-        @Bean
-        public MockRestServiceServer mockRestServiceServer(RestTemplate restTemplate) {
-            return MockRestServiceServer.createServer(restTemplate);
-        }
-        @Bean
-        public RestTemplate restTemplate() {
-            return new RestTemplate();
-        }
-        @Bean
-        public MeatClient stuffClient(RestTemplate restTemplate) {
-            return new MeatClient("1000", restTemplate);
-        }
-
-    }
-
-    @Autowired
-    private MockRestServiceServer server;
-
-    private ObjectMapper objectMapper = new ObjectMapper();
-
-    @Autowired
-    MeatClient stuffClient;
-
-    @BeforeAll
-    public static void setUp() throws Exception {
-        context = HystrixRequestContext.initializeContext();
-    }
-
-    static RequestMatcher pathStartsWith(String path) {
-        return request -> AssertionErrors.assertTrue("Path " + request.getURI().getPath() + " should start with " + path, request.getURI().getPath().startsWith(path));
-    }
-
-    private static HystrixRequestContext context;
-
-
-
-
-    @Test
-    public void testCollapsing() throws Exception {
-
-        Stuff responseStuff1 = new Stuff("1", 1);
-        Stuff responseStuff2 = new Stuff("2", 2);
-
-        String response = objectMapper.writeValueAsString(Arrays.asList(responseStuff1, responseStuff2));
-
-        this.server.expect(ExpectedCount.manyTimes(), pathStartsWith("/lotsofStuff"))
-                   .andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
-
-
-        Observable<Stuff> s1 = stuffClient.getStuffCollapsed(1);
-        Observable<Stuff> s2 = stuffClient.getStuffCollapsed(2);
-
-        List<Stuff> stuffList = s1.mergeWith(s2).toList().toBlocking().first();
-        assertEquals(2, stuffList.size());
-
-
-    }
-
-    @AfterAll
-    public static void shutdown() {
-        context.shutdown();
-    }
+//    @Configuration
+//    @EnableHystrix
+//    public static class Config {
+//
+//        @Bean
+//        public MockRestServiceServer mockRestServiceServer(RestTemplate restTemplate) {
+//            return MockRestServiceServer.createServer(restTemplate);
+//        }
+//        @Bean
+//        public RestTemplate restTemplate() {
+//            return new RestTemplate();
+//        }
+//        @Bean
+//        public MeatClient stuffClient(RestTemplate restTemplate) {
+//            return new MeatClient("1000", restTemplate);
+//        }
+//
+//    }
+//
+//    @Autowired
+//    private MockRestServiceServer server;
+//
+//    private ObjectMapper objectMapper = new ObjectMapper();
+//
+//    @Autowired
+//    MeatClient stuffClient;
+//
+//    @BeforeAll
+//    public static void setUp() throws Exception {
+//        context = HystrixRequestContext.initializeContext();
+//    }
+//
+//    static RequestMatcher pathStartsWith(String path) {
+//        return request -> AssertionErrors.assertTrue("Path " + request.getURI().getPath() + " should start with " + path, request.getURI().getPath().startsWith(path));
+//    }
+//
+//    private static HystrixRequestContext context;
+//
+//
+//
+//
+//    @Test
+//    public void testCollapsing() throws Exception {
+//
+//        Stuff responseStuff1 = new Stuff("1", 1);
+//        Stuff responseStuff2 = new Stuff("2", 2);
+//
+//        String response = objectMapper.writeValueAsString(Arrays.asList(responseStuff1, responseStuff2));
+//
+//        this.server.expect(ExpectedCount.manyTimes(), pathStartsWith("/lotsofStuff"))
+//                   .andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
+//
+//
+//        Observable<Stuff> s1 = stuffClient.getStuffCollapsed(1);
+//        Observable<Stuff> s2 = stuffClient.getStuffCollapsed(2);
+//
+//        List<Stuff> stuffList = s1.mergeWith(s2).toList().toBlocking().first();
+//        assertEquals(2, stuffList.size());
+//
+//
+//    }
+//
+//    @AfterAll
+//    public static void shutdown() {
+//        context.shutdown();
+//    }
 }

@@ -44,4 +44,12 @@ public class Meat {
     public int hashCode() {
         return Objects.hash(meatType, meatSize);
     }
+
+    @Override
+    public String toString() {
+        return "Meat{" +
+                "meatType=" + meatType +
+                ", meatSize=" + meatSize +
+                '}';
+    }
 }

@@ -5,8 +5,6 @@ import fillingservice.service.FillingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,8 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class FillingController {
 
+    private FillingService fillingService;
+
     @Autowired
-    FillingService fillingService;
+    public FillingController(FillingService fillingService) {
+        this.fillingService = fillingService;
+    }
 
     @PostMapping(value = "/filling/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public BurritoFilling orderFilling(BurritoFilling burritoFilling) {

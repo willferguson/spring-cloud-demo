@@ -8,31 +8,40 @@ import fillingservice.model.salad.Salad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import rx.Observable;
+import rx.functions.Func0;
 import rx.functions.Func2;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 @Service
 public class FillingService {
 
-    @Autowired
     private SaladClient saladClient;
-    @Autowired
     private MeatClient meatClient;
+
+    @Autowired
+    public FillingService(MeatClient meatClient, SaladClient saladClient) {
+        this.meatClient = meatClient;
+        this.saladClient = saladClient;
+    }
 
     public BurritoFilling orderFilling(BurritoFilling burritoFilling) {
 
-        List<Meat> meatFillingRequest = burritoFilling.getMeat();
-        List<Salad> saladFillingRequest = burritoFilling.getSalad();
+        return Observable.zip(
+                Observable
+                        .from(burritoFilling.getMeat())
+                        .flatMap(meatClient::getMeat)
+                        .collect((Func0<ArrayList<Meat>>) ArrayList::new, ArrayList::add),
 
-        Observable<Meat> om = Observable.from(meatFillingRequest).flatMap(meatClient::getMeat);
-
-        Observable<Salad> os = Observable.from(saladFillingRequest).flatMap(saladClient::getSalad);
-
-        return Observable.
-            return new BurritoFilling();
-        }).toBlocking().first();
+                Observable
+                        .from(burritoFilling.getSalad())
+                        .flatMap(saladClient::getSalad)
+                        .collect((Func0<ArrayList<Salad>>) ArrayList::new, ArrayList::add),
+                BurritoFilling::new)
+                .toBlocking()
+                .single();
     }
 }

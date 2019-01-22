@@ -1,4 +1,4 @@
-package burrito.meatservice.model;
+package burrito.fillingservice.model.meat;
 
 import java.util.Objects;
 
@@ -47,6 +47,9 @@ public class Meat {
 
     @Override
     public String toString() {
-        return "Meat{" + "meatType=" + meatType + ", meatSize=" + meatSize + '}';
+        return "Meat{" +
+                "meatType=" + meatType +
+                ", meatSize=" + meatSize +
+                '}';
     }
 }

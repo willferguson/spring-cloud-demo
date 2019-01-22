@@ -1,11 +1,4 @@
 
 .idea/
-configserver/config-server.iml
-configserver/target/
-consumer/consumer.iml
-consumer/target/
-spring-cloud-demo.iml
-stuffproducer/stuffproducer.iml
-stuffproducer/target/
-thingproducer/target/
-thingproducer/thingproducer.iml
+*.iml
+*/target/

@@ -1,6 +1,9 @@
 package burrito.fillingservice;
 
+import io.micrometer.statsd.StatsdConfig;
+import io.micrometer.statsd.StatsdMeterRegistry;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.actuate.autoconfigure.metrics.MeterRegistryCustomizer;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.client.RestTemplateBuilder;

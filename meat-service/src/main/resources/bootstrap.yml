@@ -19,13 +19,3 @@ eureka:
     register-with-eureka: true
   instance:
     preferIpAddress: true
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-
-logging:
-  level:
-    org.springframework: debug
-    burrito.meatservice: debug

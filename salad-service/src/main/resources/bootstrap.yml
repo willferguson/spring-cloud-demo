@@ -1,5 +1,5 @@
 server:
-  port: 9090
+  port: 9092
 spring:
   application:
     name: saladservice
@@ -19,13 +19,3 @@ eureka:
     register-with-eureka: true
   instance:
     preferIpAddress: true
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-
-logging:
-  level:
-    org.springframework: debug
-    burrito.meatservice: debug

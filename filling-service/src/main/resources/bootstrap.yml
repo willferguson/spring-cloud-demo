@@ -1,17 +1,21 @@
 server:
-  port: 8080
+  port: 9090
 spring:
-  profiles:
-    active: dev
+  boot:
+    admin:
+      client:
+        url: http://localhost:8080
   application:
     name: fillingservice
+  profiles:
+    active: dev
   cloud:
     config:
+      username: admin
+      password: admin
       discovery:
         service-id: configserver
         enabled: true
-      username: admin
-      password: admin
 eureka:
   client:
     enabled: true
@@ -21,20 +25,4 @@ eureka:
   instance:
     preferIpAddress: true
 
-management:
-  endpoint:
-    health:
-      show-details: "ALWAYS"
-  metrics:
-    export:
-      statsd:
-        host: localhost
-        port: 8125
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-logging:
-  level:
-    org.springframework: debug
-    fillingservice: debug
+

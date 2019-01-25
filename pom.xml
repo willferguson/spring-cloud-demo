@@ -14,6 +14,7 @@
         <module>filling-service</module>
         <module>configserver</module>
         <module>serviceregistry</module>
+        <module>spring-boot-admin-server</module>
     </modules>
 
     <parent>

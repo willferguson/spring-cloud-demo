@@ -1,0 +1,47 @@
+server:
+  port: 9100
+spring:
+  boot:
+    admin:
+      client:
+        url: http://localhost:8080
+  application:
+    name: api-gateway
+  profiles:
+    active: dev
+  cloud:
+    config:
+      username: admin
+      password: admin
+      discovery:
+        service-id: configserver
+        enabled: true
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lowerCaseServiceId: true
+          predicates:
+            - name: Path
+              args:
+                pattern: "'/' + serviceId.toLowerCase().replace('service', '') + '/**'"
+          filters:
+            - name: RewritePath
+              args:
+                regexp: "'/' + serviceId.toLowerCase().replace('service', '') + '/(?<remaining>.*)'"
+                replacement: "'/$\\{remaining}'"
+eureka:
+  client:
+    enabled: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+    register-with-eureka: true
+  instance:
+    preferIpAddress: true
+logging:
+  level:
+    org.springframework: debug
+
+
+
+

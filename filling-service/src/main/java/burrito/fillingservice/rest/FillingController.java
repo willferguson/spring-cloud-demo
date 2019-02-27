@@ -20,10 +20,9 @@ public class FillingController {
         this.fillingService = fillingService;
     }
 
-    @PostMapping(value = "/filling/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public BurritoFilling orderFilling(@RequestBody BurritoFilling burritoFilling) {
         return fillingService.orderFilling(burritoFilling);
-
     }
 }
 

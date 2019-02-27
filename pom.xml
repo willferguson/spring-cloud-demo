@@ -16,6 +16,7 @@
         <module>serviceregistry</module>
         <module>spring-boot-admin-server</module>
         <module>api-gateway</module>
+        <module>pricing-service</module>
     </modules>
 
     <parent>

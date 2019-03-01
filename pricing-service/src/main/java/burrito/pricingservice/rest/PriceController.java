@@ -20,7 +20,7 @@ public class PriceController {
         this.pricingService = pricingService;
     }
 
-    @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/pricing/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public PricingResult getPrice(@RequestBody BurritoFilling filling) {
         return this.pricingService.calculateBurritoQuote(filling);
     }

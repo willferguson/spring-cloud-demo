@@ -16,20 +16,46 @@ spring:
       discovery:
         service-id: configserver
         enabled: true
-    gateway:
-      discovery:
-        locator:
-          enabled: true
-          lowerCaseServiceId: true
-          predicates:
-            - name: Path
-              args:
-                pattern: "'/' + serviceId.toLowerCase().replace('service', '') + '/**'"
-          filters:
-            - name: RewritePath
-              args:
-                regexp: "'/' + serviceId.toLowerCase().replace('service', '') + '/(?<remaining>.*)'"
-                replacement: "'/$\\{remaining}'"
+#    gateway:
+#      routes:
+#        - id: pricing
+#          uri: lb://pricingservice
+#          predicates:
+#            - Path=/pricing
+#          filters:
+#            - name: Hystrix
+#              args:
+#                name: cache
+#                fallbackUri: forward:/incaseoffailureusethis
+#      discovery:
+#        locator:
+#          enabled: true
+#          lowerCaseServiceId: true
+#          predicates:
+#            - name: Path
+#              args:
+#                pattern: "'/' + serviceId.toLowerCase().replace('service', '') + '/**'"
+#          filters:
+#            - name: Hystrix
+#              args:
+#                name: pricingservice
+#                fallbackUri: forward:/incaseoffailureusethis
+#            - Hystrix=cache
+#            - name: RewritePath
+#              args:
+#                regexp: "'/' + serviceId.toLowerCase().replace('service', '') + '/(?<remaining>.*)'"
+#                replacement: "'/$\\{remaining}'"
+hystrix:
+#  command:
+#    cache:
+#      execution:
+#        isolation:
+#          thread:
+#            timeoutInMilliseconds: 10000
+  circuitBreaker:
+    enabled: true
+  requestCache:
+    enabled: true
 eureka:
   client:
     enabled: true

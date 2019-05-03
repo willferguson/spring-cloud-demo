@@ -1,0 +1,73 @@
+server:
+  port: 9100
+spring:
+  boot:
+    admin:
+      client:
+        url: http://localhost:8080
+  application:
+    name: api-gateway
+  profiles:
+    active: dev
+  cloud:
+    config:
+      username: admin
+      password: admin
+      discovery:
+        service-id: configserver
+        enabled: true
+#    gateway:
+#      routes:
+#        - id: pricing
+#          uri: lb://pricingservice
+#          predicates:
+#            - Path=/pricing
+#          filters:
+#            - name: Hystrix
+#              args:
+#                name: cache
+#                fallbackUri: forward:/incaseoffailureusethis
+#      discovery:
+#        locator:
+#          enabled: true
+#          lowerCaseServiceId: true
+#          predicates:
+#            - name: Path
+#              args:
+#                pattern: "'/' + serviceId.toLowerCase().replace('service', '') + '/**'"
+#          filters:
+#            - name: Hystrix
+#              args:
+#                name: pricingservice
+#                fallbackUri: forward:/incaseoffailureusethis
+#            - Hystrix=cache
+#            - name: RewritePath
+#              args:
+#                regexp: "'/' + serviceId.toLowerCase().replace('service', '') + '/(?<remaining>.*)'"
+#                replacement: "'/$\\{remaining}'"
+hystrix:
+#  command:
+#    cache:
+#      execution:
+#        isolation:
+#          thread:
+#            timeoutInMilliseconds: 10000
+  circuitBreaker:
+    enabled: true
+  requestCache:
+    enabled: true
+eureka:
+  client:
+    enabled: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+    register-with-eureka: true
+  instance:
+    preferIpAddress: true
+logging:
+  level:
+    org.springframework: debug
+
+
+
+
